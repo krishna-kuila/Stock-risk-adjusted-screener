@@ -74,8 +74,15 @@ Stock_Risk_Adjusted_Screener/
 ├── requirements.txt            # Clean pip requirements for deployment
 ├── .gitignore                  # Git ignore rules
 │
+├── .devcontainer/
+│   └── devcontainer.json       # VS Code Dev Container configuration
+│
+├── .github/
+│   └── workflows/
+│       └── daily_sync.yml      # GitHub Actions weekly automated data sync
+│
 ├── .streamlit/
-│   └── config.toml             # App theme configuration
+│   └── config.toml             # App theme and layout configuration
 │
 ├── config/
 │   ├── __init__.py
@@ -84,12 +91,18 @@ Stock_Risk_Adjusted_Screener/
 ├── data/
 │   └── screener.db             # SQLite database storing historical returns
 │
+├── notebooks/
+│   ├── 01_data_collection_preprocess.ipynb # Data collection & preprocessing
+│   └── 02_data_analysis.ipynb              # Exploratory quantitative data analysis
+│
+├── screenshots/                # Application UI screenshots & demo assets
+│
 ├── src/
 │   ├── __init__.py
 │   ├── fetcher.py              # Live stock fetcher with ticker alias resolution
 │   ├── metrics.py              # Quantitative formulas (CAGR, Sharpe, Sortino, VaR, etc.)
 │   ├── scoring.py              # Scorecard builder, categorizer, and table formatting
-│   ├── charts.py               # Plotly chart builders
+│   ├── charts.py               # Plotly dark-themed interactive chart builders
 │   └── pipeline.py             # ETL script to refresh local database
 │
 └── tests/
