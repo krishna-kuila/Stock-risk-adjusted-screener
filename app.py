@@ -30,7 +30,7 @@ def render_chart(fig):
 # ---------------------------------------------------------
 # Page Configuration & Minimal Header
 # ---------------------------------------------------------
-st.set_page_config(page_title="Stock Risk-Adjusted Screener", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Stock Risk-Adjusted Screener", page_icon="📈", layout="wide", initial_sidebar_state="expanded")
 
 # Essential CSS Styling for Header and Chart Container
 st.markdown("""
@@ -128,27 +128,38 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Hide Streamlit Community Cloud branding, Fork button, GitHub icon, and Menu */
-    #MainMenu {visibility: hidden !important; display: none !important;}
-    footer {visibility: hidden !important; display: none !important;}
-    #GithubIcon {visibility: hidden !important; display: none !important;}
-    [data-testid="stAppDeployButton"] {visibility: hidden !important; display: none !important;}
-    [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
-    [data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
-    [data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
-    [data-testid="stHeaderActionElements"] {visibility: hidden !important; display: none !important;}
-    [class*="viewerBadge"] {visibility: hidden !important; display: none !important;}
-    [class*="ViewerBadge"] {visibility: hidden !important; display: none !important;}
-    div[class*="ProfileButton"] {visibility: hidden !important; display: none !important;}
-    header[data-testid="stHeader"] {
-        background-color: transparent !important;
-    }
-    /* Keep sidebar toggle button accessible */
-    [data-testid="stSidebarCollapsedControl"],
-    [data-testid="collapsedControl"] {
-        visibility: visible !important;
+    /* Ensure Sidebar and its toggle controls are always visible and accessible */
+    section[data-testid="stSidebar"],
+    div[data-testid="stSidebar"],
+    [data-testid="stSidebarNav"] {
         display: flex !important;
+        visibility: visible !important;
+    }
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebarCollapseButton"] {
+        display: flex !important;
+        visibility: visible !important;
         z-index: 1000001 !important;
+    }
+
+    /* Hide ONLY the Fork button and the GitHub repository link */
+    #GithubIcon,
+    [data-testid="stHeader"] a[href*="Stock-risk-adjusted-screener" i],
+    [data-testid="stHeader"] a[href*="krishna-kuila/Stock-risk-adjusted-screener" i],
+    [data-testid="stHeaderActionElements"] a[title*="GitHub" i],
+    [data-testid="stHeaderActionElements"] a[aria-label*="GitHub" i],
+    [data-testid="stHeaderActionElements"] a[aria-label*="repository" i],
+    [data-testid="stHeaderActionElements"] a[href*="Stock-risk-adjusted-screener" i],
+    [data-testid="stHeaderActionElements"] #GithubIcon,
+    button[title*="Fork" i],
+    button[aria-label*="Fork" i],
+    a[href*="/fork" i],
+    a[title*="Fork" i],
+    [data-testid*="fork" i],
+    [class*="Fork" i] {
+        display: none !important;
+        visibility: hidden !important;
     }
 </style>
 """, unsafe_allow_html=True)
