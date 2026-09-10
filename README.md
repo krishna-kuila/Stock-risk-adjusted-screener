@@ -21,7 +21,7 @@ I built this screener to bring risk-adjusted evaluation into simple, practical t
 ## 🚀 What the App Does
 
 ### 1. Pre-Loaded Universe + Live Custom Search
-- **Nifty 50 Universe:** Comes pre-loaded with 5 years of daily data for 20 large-cap stocks across 7 sectors (IT, Banking, Auto, Energy, Pharma, FMCG, Materials), stored locally in SQLite for fast startup.
+- **Nifty 50 Universe:** Comes pre-loaded with 5 years of daily data for 20 large-cap stocks across 7 sectors (IT, Banking, Auto, Energy, Pharma, FMCG, Materials), stored locally in SQLite for fast startup (**updates weekly**).
 - **Search Any NSE Stock:** You can switch to "Custom Watchlist" and type any Indian stock symbol or name (e.g. `RIL`, `TCS`, `M&M`, `BAJAJ FINANCE`). A built-in alias resolver maps common name to their Yahoo Finance symbols and loads 5 years of daily returns in ~1.5 seconds.
 
 ### 2. Three Main Tabs
@@ -69,6 +69,7 @@ I built this screener to bring risk-adjusted evaluation into simple, practical t
 
 ```text
 Stock_Risk_Adjusted_Screener/
+
 ├── app.py                      # Main Streamlit application
 ├── pyproject.toml              # Project dependencies and config
 ├── requirements.txt            # Clean pip requirements for deployment
@@ -90,10 +91,6 @@ Stock_Risk_Adjusted_Screener/
 │
 ├── data/
 │   └── screener.db             # SQLite database storing historical returns
-│
-├── notebooks/
-│   ├── 01_data_collection_preprocess.ipynb # Data collection & preprocessing
-│   └── 02_data_analysis.ipynb              # Exploratory quantitative data analysis
 │
 ├── screenshots/                # Application UI screenshots & demo assets
 │
