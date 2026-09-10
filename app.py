@@ -127,6 +127,29 @@ st.markdown("""
     [data-testid="InputInstructions"] {
         display: none !important;
     }
+
+    /* Hide Streamlit Community Cloud branding, Fork button, GitHub icon, and Menu */
+    #MainMenu {visibility: hidden !important; display: none !important;}
+    footer {visibility: hidden !important; display: none !important;}
+    #GithubIcon {visibility: hidden !important; display: none !important;}
+    [data-testid="stAppDeployButton"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
+    [data-testid="stHeaderActionElements"] {visibility: hidden !important; display: none !important;}
+    [class*="viewerBadge"] {visibility: hidden !important; display: none !important;}
+    [class*="ViewerBadge"] {visibility: hidden !important; display: none !important;}
+    div[class*="ProfileButton"] {visibility: hidden !important; display: none !important;}
+    header[data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+    /* Keep sidebar toggle button accessible */
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        display: flex !important;
+        z-index: 1000001 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
