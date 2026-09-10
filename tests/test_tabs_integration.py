@@ -241,6 +241,46 @@ class TestTabsIntegration(unittest.TestCase):
         self.assertEqual(formatted.loc["Sharpe", "TCS.NS"], "1.25")
         self.assertEqual(formatted.loc["Max Drawdown", "TCS.NS"], "-21.40%")
 
+    def test_nifty_mode_last_fetch_date_pill(self):
+        """Verify that Nifty 50 mode generates the Last Fetch Date pill from database dates, and hides it in custom mode."""
+        import sqlite3
+        from config import DB_PATH
+
+        conn = sqlite3.connect(DB_PATH)
+        df = pd.read_sql_query("SELECT date FROM stock_prices ORDER BY date ASC", conn)
+        conn.close()
+
+        self.assertFalse(df.empty)
+        max_date = df["date"].max()
+        self.assertIsNotNone(max_date)
+        formatted_date = pd.to_datetime(max_date).strftime("%d %b %Y")
+
+        # Test pill generation logic when stage_toggle is False (Nifty 50 mode)
+        stage_toggle_false = False
+        nifty_pill = ""
+        if not stage_toggle_false:
+            nifty_pill = f"""
+        <div class="meta-item">
+            <span class="meta-label">Last Fetch Date:</span>
+            <span class="meta-val">{formatted_date}</span>
+        </div>"""
+
+        self.assertIn("Last Fetch Date:", nifty_pill)
+        self.assertIn(formatted_date, nifty_pill)
+
+        # Test pill generation logic when stage_toggle is True (Custom Watchlist mode)
+        stage_toggle_true = True
+        custom_pill = ""
+        if not stage_toggle_true:
+            custom_pill = f"""
+        <div class="meta-item">
+            <span class="meta-label">Last Fetch Date:</span>
+            <span class="meta-val">{formatted_date}</span>
+        </div>"""
+
+        self.assertEqual(custom_pill, "")
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -1,6 +1,6 @@
 # Risk-Adjusted Stock Screener (Indian Equities)
 
-🔗 **Live Demo:** [Open App on Streamlit](https://your-app-name.streamlit.app) *(Replace with your deployed app link)*
+🔗 **Live Demo:** [[Open App on Streamlit]](https://stock-risk-adjusted-screener.streamlit.app/)
 
 An interactive stock analysis dashboard that helps you evaluate whether a stock's returns are actually worth the risk you take.
 
@@ -103,8 +103,9 @@ Stock_Risk_Adjusted_Screener/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/Stock_Risk_Adjusted_Screener.git
-cd Stock_Risk_Adjusted_Screener
+git clone https://github.com/krishna-kuila/Stock-risk-adjusted-screener.git
+
+cd Stock-risk-adjusted-screener
 ```
 
 ### 2. Set up virtual environment & install dependencies
@@ -117,6 +118,10 @@ python -m venv .venv
 source .venv/bin/activate
 
 pip install -r requirements.txt
+
+0r 
+
+uv sync
 ```
 
 *(Alternatively, if you use `uv`: `uv run streamlit run app.py`)*

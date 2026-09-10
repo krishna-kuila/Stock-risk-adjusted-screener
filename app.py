@@ -1,4 +1,4 @@
-
+import os
 import sqlite3
 import streamlit as st
 import pandas as pd
@@ -134,13 +134,14 @@ st.markdown("""
 # 1. Load Data from SQLite
 # ---------------------------------------------------------
 @st.cache_data
-def load_data():
+def load_data(db_mtime: float = 0.0):
     conn = sqlite3.connect(DB_PATH)
     df = pd.read_sql_query("SELECT ticker, date, daily_return FROM stock_prices ORDER BY date ASC", conn)
     conn.close()
     return df
 
-data = load_data()
+db_mtime = os.path.getmtime(DB_PATH) if os.path.exists(DB_PATH) else 0.0
+data = load_data(db_mtime)
 
 # Separate Benchmark & Equities
 bench_series = data[data["ticker"] == BENCHMARK_TICKER].set_index("date")["daily_return"]
@@ -257,6 +258,27 @@ with st.sidebar.expander("Benchmark Thresholds", expanded=True):
 # ---------------------------------------------------------
 # Minimal Header
 # ---------------------------------------------------------
+nifty_last_date_pill = ""
+if not stage_toggle:
+    latest_nifty_date = (
+        common_dates.max()
+        if not common_dates.empty
+        else (data["date"].max() if not data.empty and "date" in data.columns else None)
+    )
+    if latest_nifty_date:
+        try:
+            last_date_fmt = pd.to_datetime(latest_nifty_date).strftime("%d %b %Y")
+        except Exception:
+            last_date_fmt = str(latest_nifty_date)
+    else:
+        last_date_fmt = "N/A"
+
+    nifty_last_date_pill = f"""
+        <div class="meta-item">
+            <span class="meta-label">Last Fetch Date:</span>
+            <span class="meta-val">{last_date_fmt}</span>
+        </div>"""
+
 st.markdown(f"""
 <div class="header-container">
     <h1 class="main-title">Stock Risk-Adjusted Screener</h1>
@@ -272,7 +294,7 @@ st.markdown(f"""
         <div class="meta-item">
             <span class="meta-label">Period:</span>
             <span class="meta-val">{horizon_choice}</span>
-        </div>
+        </div>{nifty_last_date_pill}
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -363,7 +385,7 @@ if stage_toggle:
         with sub_c_in:
             st.text_input(
                 "Stock Symbol",
-                placeholder="Enter stock name (e.g. INFY, RELIANCE, SBIN)" if not is_limit_reached else "5-stock limit reached",
+                placeholder="Enter stock symbol (e.g. TITAN, RELIANCE, INFY  ..)" if not is_limit_reached else "5-stock limit reached",
                 label_visibility="collapsed",
                 key="ticker_input",
                 on_change=handle_add,
