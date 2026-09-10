@@ -1,14 +1,14 @@
 # Risk-Adjusted Stock Screener (Indian Equities)
 
-🔗 **Live Demo:** [[Open App on Streamlit]](https://stock-risk-adjusted-screener.streamlit.app/)
+ **Live Demo:** [[Open App on Streamlit]](https://stock-risk-adjusted-screener.streamlit.app/)
 
 An interactive stock analysis dashboard that helps you evaluate whether a stock's returns are actually worth the risk you take.
 
 Most free screeners show raw past returns (like *"this stock gave 40% in a year"*), but they don't show how much price volatility or drawdown you had to sit through. This project pulls 5 years of daily price data and ranks Indian equities using portfolio-level metrics like Sharpe Ratio, Sortino Ratio, Maximum Drawdown, and Beta.
 
----
+--
 
-## 📌 Why I Built This
+##  Why I Built This
 
 When retail investors look for stocks, they usually chase whatever went up the most recently. But two stocks with the same 20% annual return can have very different risk:
 - One grows steadily with small 5–10% dips.
@@ -16,9 +16,9 @@ When retail investors look for stocks, they usually chase whatever went up the m
 
 I built this screener to bring risk-adjusted evaluation into simple, practical terms for retail investors.
 
----
+--
 
-## 🚀 What the App Does
+## What the App Does
 
 ### 1. Pre-Loaded Universe + Live Custom Search
 - **Nifty 50 Universe:** Comes pre-loaded with 5 years of daily data for 20 large-cap stocks across 7 sectors (IT, Banking, Auto, Energy, Pharma, FMCG, Materials), stored locally in SQLite for fast startup (**updates weekly**).
@@ -37,9 +37,55 @@ I built this screener to bring risk-adjusted evaluation into simple, practical t
   - Slump recovery time (how many days/months it took to recover from its worst drop)
   - 95% Historical Value-at-Risk (VaR) distribution
 
----
+--
 
-## 📊 Metrics Explained Simply
+## How It Works (End-to-End Workflow)
+
+The flowchart below outlines how market data flows from offline and live sources through our quantitative risk engine into the user dashboard:
+
+```mermaid
+flowchart TD
+    subgraph Data_Layer ["1. Data Ingestion & Retrieval"]
+        direction TB
+        A1["Weekly GitHub Actions Cron<br/>(Every Friday 18:00 IST)"] -->|Runs pipeline.py| A2[("SQLite Database<br/>screener.db")]
+        A2 -->|Pre-loaded 5Y returns| A3["Nifty 50 Mode"]
+
+        B1["User Search Input<br/>(e.g., 'RIL', 'TCS', 'M&M')"] -->|Resolves common names| B2["Alias Matcher"]
+        B2 -->|Tier 1: Direct v8 JSON query| B3["curl_cffi (Chrome Impersonation)"]
+        B3 -.->|Tier 2 fallback on network error| B4["yfinance Ticker API"]
+        B3 -->|Returns 5Y daily returns| B5["Custom Watchlist Mode"]
+        B4 -->|Returns 5Y daily returns| B5
+    end
+
+    subgraph Quant_Layer ["2. Quantitative Engine (src/metrics.py & scoring.py)"]
+        direction TB
+        C1["Data Slicing & Alignment<br/>(1Y, 3Y, 5Y vs. Nifty 50)"] --> C2["Core Risk & Return Formulas"]
+
+        C2 -->|Compounded return| M1["CAGR"]
+        C2 -->|Total volatility| M2["Sharpe Ratio"]
+        C2 -->|Downside volatility only| M3["Sortino Ratio"]
+        C2 -->|Peak-to-trough drop| M4["Max Drawdown & Slump Time"]
+        C2 -->|Covariance vs. Benchmark| M5["Beta & Market Capture"]
+        C2 -->|5th percentile cutoff| M6["1D 95% VaR"]
+
+        M1 & M2 & M3 & M4 & M5 & M6 --> C3["Risk Categorizer<br/>(Quality Compounder, Defensive Preserver, High-Risk Trap)"]
+    end
+
+    subgraph UI_Layer ["3. Interactive Streamlit Dashboard (app.py)"]
+        direction TB
+        D1["Tab 1: Stock Rankings<br/>Sharpe leaderboard & top pick takeaway"]
+        D2["Tab 2: Compare Stocks<br/>Transposed table, cumulative growth & correlation matrix"]
+        D3["Tab 3: Stock Deep Dive<br/>8-card KPI grid, plain-English verdict & health checks"]
+    end
+
+    A3 --> C1
+    B5 --> C1
+    C3 --> UI_Layer
+```
+
+--
+
+## Metrics Explained Simply
 
 | Metric | What It Means | Why It Matters |
 | :--- | :--- | :--- |
@@ -52,9 +98,9 @@ I built this screener to bring risk-adjusted evaluation into simple, practical t
 | **1D 95% VaR** | Value at Risk (95% confidence) | The maximum one-day loss expected on 95 out of 100 trading days. |
 | **Downside Capture** | Performance on market down days | Shows what percentage of the Nifty's drop the stock absorbs when the market falls. |
 
----
+--
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** Streamlit
 - **Visualizations:** Plotly (interactive charts with clean tooltips)
@@ -63,9 +109,9 @@ I built this screener to bring risk-adjusted evaluation into simple, practical t
 - **Database:** SQLite3 (stores pre-computed daily returns)
 - **Package Management:** uv / pip
 
----
+--
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 Stock_Risk_Adjusted_Screener/
@@ -107,9 +153,9 @@ Stock_Risk_Adjusted_Screener/
     └── test_tabs_integration.py# End-to-end integration tests
 ```
 
----
+--
 
-## 💻 Running Locally
+## Running Locally
 
 ### 1. Clone the repository
 ```bash
@@ -141,9 +187,9 @@ uv sync
 streamlit run app.py
 ```
 
----
+--
 
-## 🧪 Testing
+## Testing
 
 The repository includes **17 automated tests** verifying both the financial calculations and the UI integration:
 
@@ -154,7 +200,7 @@ python -m unittest discover tests -v
 - **Unit tests:** Check CAGR, Volatility, Sharpe, Sortino, Max Drawdown peak-tracking, and 95% Historical VaR calculations against known test data.
 - **Integration tests:** Test data slicing across 1-Year, 3-Year, and 5-Year horizons, single-stock watchlist handling, ticker alias resolution, and invalid ticker handling.
 
----
+--
 ## Project Screenshots
 
 ![alt text](screenshots/Homepage.png)
