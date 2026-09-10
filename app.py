@@ -195,7 +195,7 @@ st.sidebar.header("Controls")
 # Toggle to switch between Preset Universe and Custom Watchlist
 stage_toggle = st.sidebar.toggle(
     "Custom Watchlist", 
-    value=False,
+    value=True,
     help="Switch between Nifty 50 and your own stock list"
 )
 
