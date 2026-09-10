@@ -1,89 +1,140 @@
-# 📊 StockRiskAdjustedScreener
-### Which stocks are actually worth the risk you're taking?
+# Risk-Adjusted Stock Screener (Indian Equities)
 
-🔗 **Live Dashboard:** [your-streamlit-link-here]
-💻 **Code:** You're already here
+🔗 **Live Demo:** [Open App on Streamlit](https://your-app-name.streamlit.app) *(Replace with your deployed app link)*
+
+An interactive stock analysis dashboard that helps you evaluate whether a stock's returns are actually worth the risk you take.
+
+Most free screeners show raw past returns (like *"this stock gave 40% in a year"*), but they don't show how much price volatility or drawdown you had to sit through. This project pulls 5 years of daily price data and ranks Indian equities using portfolio-level metrics like Sharpe Ratio, Sortino Ratio, Maximum Drawdown, and Beta.
 
 ---
 
-## 🎯 The Problem
+## 📌 Why I Built This
 
-Retail investors pick stocks based on raw returns alone — "this stock gave 40% 
-this year" — without adjusting for how much risk they took to get there. 
-Two stocks can post identical returns while one is a rollercoaster and the 
-other is steady. Free tools like Yahoo Finance and stock screeners show 
-return numbers but not risk-adjusted performance, so investors routinely 
-mispriced risk and chase volatile winners.
+When retail investors look for stocks, they usually chase whatever went up the most recently. But two stocks with the same 20% annual return can have very different risk:
+- One grows steadily with small 5–10% dips.
+- The other crashes 35–40% before bouncing back, testing an investor's patience and leading to panic selling.
 
-## 💡 The Solution
+I built this screener to bring risk-adjusted evaluation into simple, practical terms for retail investors.
 
-A screener that pulls 5 years of historical price data for [20] NSE-listed 
-stocks, cleans it, and ranks them using the same risk-adjusted metrics used 
-in professional quant/portfolio analysis — not just raw return.
+---
 
-**Metrics computed:**
-- **Sharpe Ratio** — return per unit of total risk
-- **Sortino Ratio** — return per unit of downside risk only
-- **Maximum Drawdown** — worst peak-to-trough loss an investor would've endured
-- **Beta** — sensitivity to Nifty50 market movements (via OLS regression)
-- **Value at Risk (95%)** — the loss threshold you'd breach only 5% of the time
-- **Correlation matrix** — checks if a "diversified" portfolio is actually diversified
+## 🚀 What the App Does
 
-## 🔑 Key Insights
+### 1. Pre-Loaded Universe + Live Custom Search
+- **Nifty 50 Universe:** Comes pre-loaded with 5 years of daily data for 20 large-cap stocks across 7 sectors (IT, Banking, Auto, Energy, Pharma, FMCG, Materials), stored locally in SQLite for fast startup.
+- **Search Any NSE Stock:** You can switch to "Custom Watchlist" and type any Indian stock symbol or name (e.g. `RIL`, `TCS`, `M&M`, `BAJAJ FINANCE`). A built-in alias resolver maps common abbreviations to their Yahoo Finance symbols and loads 5 years of daily returns in ~1.5 seconds.
 
-*(fill these in once you run the analysis — always use real numbers)*
-- [Stock X] had the [2nd] highest raw return but the [worst] Sortino ratio 
-  in the dataset, meaning most of its gains came bundled with high downside risk
-- [Stock Y] and [Stock Z] looked like diversified picks but showed a [0.85] 
-  correlation — holding both added minimal diversification benefit
-- [X]% of high-return stocks in the sample carried a Beta above 1.5, 
-  meaning they amplify market downturns
+### 2. Three Main Tabs
+- **Tab 1: Screener & Rankings** — Displays a scorecard ranking stocks from best to worst by Sharpe Ratio. Filter by risk categories, set minimum CAGR thresholds, and export results to CSV.
+- **Tab 2: Compare Stocks** — Pick 2 to 4 stocks and compare them side by side with:
+  - Cumulative return growth chart
+  - Drawdown curves from previous peaks
+  - Correlation heatmap to check if your selected stocks actually provide diversification
+- **Tab 3: Stock Deep Dive** — Inspect a single stock in detail:
+  - 8-metric scorecard (CAGR, Volatility, Beta, Sharpe, Sortino, Max Drawdown, 1D 95% VaR, Risk Profile)
+  - Plain-English verdict summarizing whether the stock's returns justified its risk
+  - Market crash cushion (Downside Capture vs. Nifty 50 on red days)
+  - Slump recovery time (how many days/months it took to recover from its worst drop)
+  - 95% Historical Value-at-Risk (VaR) distribution
+
+---
+
+## 📊 Metrics Explained Simply
+
+| Metric | What It Means | Why It Matters |
+| :--- | :--- | :--- |
+| **CAGR** | Compound Annual Growth Rate | The annualized return of the stock over the selected time period. |
+| **Volatility** | Annual price swings | How wildly the stock price fluctuates each year. |
+| **Sharpe Ratio** | Return earned above a safe 7.05% bank deposit per unit of total risk | Measures whether the extra return was worth the volatility. Above 1.0 is good; below 0 means it earned less than a safe fixed deposit. |
+| **Sortino Ratio** | Return per unit of downside risk only | Focuses strictly on harmful drops, without penalizing sudden upside rallies. |
+| **Max Drawdown** | Worst drop from top to bottom | The biggest percentage crash from a previous peak to the trough. |
+| **Beta** | Sensitivity to Nifty 50 | Measures how fast the stock moves relative to the market (> 1.0 moves faster; < 1.0 is steadier). |
+| **1D 95% VaR** | Value at Risk (95% confidence) | The maximum one-day loss expected on 95 out of 100 trading days. |
+| **Downside Capture** | Performance on market down days | Shows what percentage of the Nifty's drop the stock absorbs when the market falls. |
+
+---
 
 ## 🛠️ Tech Stack
 
-**Data Engineering**
-- Python, yfinance API — data collection
-- Pandas — cleaning, missing-date handling, return calculation
-- SQLite — storage for cleaned historical data
+- **Frontend:** Streamlit
+- **Visualizations:** Plotly (interactive charts with clean tooltips)
+- **Data & Math:** Pandas, NumPy
+- **Data Retrieval:** yfinance, curl_cffi (fast API queries with browser impersonation)
+- **Database:** SQLite3 (stores pre-computed daily returns)
+- **Package Management:** uv / pip
 
-**Data Analysis**
-- NumPy, SciPy — Sharpe/Sortino/VaR calculations
-- statsmodels — OLS regression for Beta
-- Pandas — correlation analysis
+---
 
-**Visualization & Deployment**
-- Matplotlib, Seaborn — drawdown curves, heatmaps
-- Streamlit — interactive dashboard
-- GitHub + Streamlit Community Cloud — free hosting
+## 📁 Project Structure
 
-## 📐 Methodology
+```text
+Stock_Risk_Adjusted_Screener/
+├── app.py                      # Main Streamlit application
+├── pyproject.toml              # Project dependencies and config
+├── requirements.txt            # Clean pip requirements for deployment
+├── .gitignore                  # Git ignore rules
+│
+├── .streamlit/
+│   └── config.toml             # App theme configuration
+│
+├── config/
+│   ├── __init__.py
+│   └── settings.py             # Global constants (risk-free rate, trading days)
+│
+├── data/
+│   └── screener.db             # SQLite database storing historical returns
+│
+├── src/
+│   ├── __init__.py
+│   ├── fetcher.py              # Live stock fetcher with ticker alias resolution
+│   ├── metrics.py              # Quantitative formulas (CAGR, Sharpe, Sortino, VaR, etc.)
+│   ├── scoring.py              # Scorecard builder, categorizer, and table formatting
+│   ├── charts.py               # Plotly chart builders
+│   └── pipeline.py             # ETL script to refresh local database
+│
+└── tests/
+    ├── test_live_precision.py  # Math precision unit tests
+    └── test_tabs_integration.py# End-to-end integration tests
+```
 
-1. Pulled 5 years of daily OHLCV data for [20] stocks + Nifty50 benchmark
-2. Cleaned missing trading days and verified adjusted close prices
-3. Computed daily returns, then derived all risk metrics (annualized where applicable)
-4. Built a composite scorecard ranking stocks across all 6 metrics
-5. Deployed an interactive dashboard for live stock comparison
+---
 
-## 📸 Screenshot
+## 💻 Running Locally
 
-![dashboard screenshot](link-to-screenshot.png)
-
-## 🚀 How to Run Locally
-
+### 1. Clone the repository
 ```bash
-git clone [your-repo-link]
+git clone https://github.com/<your-username>/Stock_Risk_Adjusted_Screener.git
+cd Stock_Risk_Adjusted_Screener
+```
+
+### 2. Set up virtual environment & install dependencies
+```bash
+python -m venv .venv
+
+# On Windows:
+.venv\Scripts\activate
+# On macOS / Linux:
+source .venv/bin/activate
+
 pip install -r requirements.txt
+```
+
+*(Alternatively, if you use `uv`: `uv run streamlit run app.py`)*
+
+### 3. Run the application
+```bash
 streamlit run app.py
 ```
 
-## 📈 Future Scope
+---
 
-- Portfolio optimization using Markowitz Efficient Frontier
-- Backtesting a simple risk-adjusted trading strategy
-- Extending to NASDAQ/S&P500 stocks for cross-market comparison
+## 🧪 Testing
 
-## 👤 About Me
+The repository includes **17 automated tests** verifying both the financial calculations and the UI integration:
 
-[Your name] | [LinkedIn] | [Email]
-Aspiring Data Analyst with a data engineering foundation — built this to 
-apply real portfolio-risk math to a problem I actually care about as a retail investor.
+```bash
+python -m unittest discover tests -v
+```
+
+- **Unit tests:** Check CAGR, Volatility, Sharpe, Sortino, Max Drawdown peak-tracking, and 95% Historical VaR calculations against known test data.
+- **Integration tests:** Test data slicing across 1-Year, 3-Year, and 5-Year horizons, single-stock watchlist handling, ticker alias resolution, and invalid ticker handling.
