@@ -83,22 +83,22 @@ flowchart TD
     C3 --> UI_Layer
 ```
 
---
+---
 
-## Metrics Explained Simply
+## 📊 Metrics Explained Simply
 
-| Metric | What It Means | Why It Matters |
+| Metric | Formula | Practical Meaning & Why It Matters |
 | :--- | :--- | :--- |
-| **CAGR** | Compound Annual Growth Rate | The annualized return of the stock over the selected time period. |
-| **Volatility** | Annual price swings | How wildly the stock price fluctuates each year. |
-| **Sharpe Ratio** | Return earned above a safe 7.05% bank deposit per unit of total risk | Measures whether the extra return was worth the volatility. Above 1.0 is good; below 0 means it earned less than a safe fixed deposit. |
-| **Sortino Ratio** | Return per unit of downside risk only | Focuses strictly on harmful drops, without penalizing sudden upside rallies. |
-| **Max Drawdown** | Worst drop from top to bottom | The biggest percentage crash from a previous peak to the trough. |
-| **Beta** | Sensitivity to Nifty 50 | Measures how fast the stock moves relative to the market (> 1.0 moves faster; < 1.0 is steadier). |
-| **1D 95% VaR** | Value at Risk (95% confidence) | The maximum one-day loss expected on 95 out of 100 trading days. |
-| **Downside Capture** | Performance on market down days | Shows what percentage of the Nifty's drop the stock absorbs when the market falls. |
+| **CAGR** | $ (\frac{\text{Ending Value}}{\text{Starting Value}})^{\frac{1}{\text{Years}}} - 1 $ | Smoothes out year-to-year price swings into a single constant annual growth rate. Unlike simple average return, CAGR accounts for compounding, telling you what the investment actually delivered per year in your pocket. |
+| **Annualized Volatility** | $ \sigma_{\text{daily}} \times \sqrt{252} $ | Measures how wildly daily prices fluctuate around their average. Higher volatility means a bumpier ride and greater risk of panic-selling during sharp market pullbacks. |
+| **Sharpe Ratio** | $ \frac{R_{\text{annual}} - R_f}{\sigma_{\text{annual}}} $ | Measures return earned above a safe 7.05% bank deposit (10Y G-Sec) per unit of total risk. Above 1.0 means you were well-rewarded for the ride; below 0 means you took stock market risk and still earned less than a safe fixed deposit. |
+| **Sortino Ratio** | $ \frac{R_{\text{annual}} - R_f}{\sigma_{\text{downside}}} $ | A smarter take on Sharpe that only counts downside drops in the denominator. Standard deviation penalizes both crashes and 20% upside rallies; Sortino only penalizes harmful drops while rewarding upside momentum. |
+| **Max Drawdown** | $ \min_t \left(\frac{\text{Price}_t - \text{Peak}_t}{\text{Peak}_t}\right) $ | The deepest percentage drop from an all-time peak to trough before recovering. Reflects real-world investor pain: if you invested at the worst possible peak, this is the worst paper loss you would have had to sit through. |
+| **Beta** | $ \frac{\text{Cov}(R_{\text{stock}}, R_{\text{market}})}{\text{Var}(R_{\text{market}})} $ | Gauges sensitivity to the Nifty 50. A Beta of 1.3 means the stock typically moves 30% faster than the market (bigger rally gains, but steeper drops), while a Beta below 0.8 acts as a defensive cushion during market sell-offs. |
+| **1D 95% VaR** | $ -\text{Percentile}_{5\%}(R_{\text{daily}}) $ | The maximum single-day loss expected on 95 out of 100 trading days. Helps you set realistic daily risk boundaries so you can differentiate normal market noise from an extreme 1-in-20-day drop. |
+| **Downside Capture** | $ \frac{\text{Mean}(R_{\text{stock}} \mid R_{\text{market}} < 0)}{\text{Mean}(R_{\text{market}} \mid R_{\text{market}} < 0)} $ | Shows how much of the Nifty's decline the stock absorbs when the market falls. Below 100% means the stock protects your capital on red days; above 100% means it falls harder than the market during sell-offs. |
 
---
+---
 
 ## Tech Stack
 
