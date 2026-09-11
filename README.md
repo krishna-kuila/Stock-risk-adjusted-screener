@@ -85,7 +85,7 @@ flowchart TD
 
 ---
 
-## 📊 Metrics Explained Simply
+## Metrics Explained Simply
 
 | Metric | Formula | Practical Meaning & Why It Matters |
 | :--- | :--- | :--- |
