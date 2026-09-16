@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Send HTTP request to Streamlit app
         run: |
-          curl -L -s -o /dev/null https://stock-risk-adjusted-screener.streamlit.app/
+          curl -s -o /dev/null -w "%{http_code}" https://stock-risk-adjusted-screener.streamlit.app/
