@@ -9,15 +9,28 @@ jobs:
   wake-streamlit:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
+          cache: 'pip'
 
-      - name: Install Playwright
-        run: |
-          pip install playwright
-          playwright install chromium --with-deps
+      - name: Install Playwright Python package
+        run: pip install playwright
+
+      - name: Cache Playwright Browsers
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium
+
+      - name: Install Playwright browser (if not cached)
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
+        run: playwright install chromium --with-deps
 
       - name: Wake up Streamlit App
         run: |
@@ -32,14 +45,12 @@ jobs:
               print(f'Navigating to {APP_URL}...')
               page.goto(APP_URL, timeout=60000)
 
-              # Check if the wake-up button is present
               wake_button = page.locator('button:has-text(\"Yes, get this app back up\")')
               
               try:
                   wake_button.wait_for(state='visible', timeout=7000)
                   print('App is sleeping. Clicking wake-up button...')
                   wake_button.click()
-                  # Wait briefly to ensure the trigger is sent to the backend
                   page.wait_for_timeout(10000)
                   print('Wake-up signal sent successfully.')
               except Exception:
