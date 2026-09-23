@@ -6,9 +6,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  ping:
+  wake-streamlit:
     runs-on: ubuntu-latest
     steps:
-      - name: Send HTTP request to Streamlit app
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Playwright
         run: |
-          curl -s -o /dev/null -w "%{http_code}" https://stock-risk-adjusted-screener.streamlit.app/
+          pip install playwright
+          playwright install chromium --with-deps
+
+      - name: Wake up Streamlit App
+        run: |
+          python -c "
+          from playwright.sync_api import sync_playwright
+
+          APP_URL = 'https://stock-risk-adjusted-screener.streamlit.app/'
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              page = browser.new_page()
+              print(f'Navigating to {APP_URL}...')
+              page.goto(APP_URL, timeout=60000)
+
+              # Check if the wake-up button is present
+              wake_button = page.locator('button:has-text(\"Yes, get this app back up\")')
+              
+              try:
+                  wake_button.wait_for(state='visible', timeout=7000)
+                  print('App is sleeping. Clicking wake-up button...')
+                  wake_button.click()
+                  # Wait briefly to ensure the trigger is sent to the backend
+                  page.wait_for_timeout(10000)
+                  print('Wake-up signal sent successfully.')
+              except Exception:
+                  print('Wake-up button not found. App is already active.')
+              finally:
+                  browser.close()
+          "
